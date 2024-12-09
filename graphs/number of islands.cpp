@@ -1,5 +1,5 @@
 https://neetcode.io/problems/count-number-of-islands
-
+BFS
 class Solution {
 public:
     void bfs(int i, int j, vector<vector<int>> &vis, vector<vector<char>>& grid){
@@ -47,3 +47,50 @@ public:
 
     }
 };
+
+DFS:
+class Solution {
+    vector<int> dx = {-1, 1, 0, 0};
+    vector<int> dy = {0, 0, -1, 1};
+public:
+    void dfs(vector<vector<char>> &grid, vector<vector<int>> &vis, int i, int j){
+        vis[i][j] = 1;
+        int r = grid.size();
+        int c = grid[0].size();
+
+        for(int k = 0; k < 4; k++){
+            int new_x = i + dx[k];
+            int new_y = j + dy[k];
+
+            if(new_x >= 0 && new_x < r &&
+             new_y >= 0 && new_y < c &&
+             grid[new_x][new_y] == '1' && vis[new_x][new_y] == 0){
+                dfs(grid, vis, new_x, new_y);
+             }
+        }
+    }
+    int numIslands(vector<vector<char>>& grid) {
+        int r = grid.size();
+        int c = grid[0].size();
+        int count = 0;
+        vector<vector<int>> vis(r, vector<int> (c, 0));
+
+        for(int i = 0; i<r; i++){
+            for(int j = 0; j<c; j++){
+                if(grid[i][j] == '1' && vis[i][j] != 1){
+                    dfs(grid, vis, i, j);
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+};
+
+// approach:
+
+// if we find 1 -call a bfs/dfs call, mark all 1s arround it as vis, 
+// count++ for island
+
+// go on traversing the grid for next unvisited "1"
