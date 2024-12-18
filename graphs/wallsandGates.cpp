@@ -1,53 +1,69 @@
 class Solution {
+    vector<int> dx = {0, 0, -1, 1};
+    vector<int> dy = {-1, 1, 0, 0};
 public:
-    int findTre(int i, int j, vector<vector<int>>& grid){
-
+    int bfs(int i, int j, vector<vector<int>>& grid){
         int r = grid.size();
         int c = grid[0].size();
-        vector<vector<int>> vis(r, vector<int>(c,0));
-        vis[i][j] = 1;
 
-        vector<int> dx = {0,0,-1,1};
-        vector<int> dy = {-1,1,0,0};
+        // priority_queue<pair<pair<int,int>, int>, vector<pair<pair<int,int>, int>> greater<pair<pair<int,int>, int>>> q;
 
-        queue<pair<int,int>> q;
-        q.push({i,j});
-        int steps = 0;
+         priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> q;
+        q.push({0, {i, j}});
 
         while(!q.empty()){
-            int x = q.front().first;
-            int y = q.front().second;
-            if(grid[x][y] == 0) return steps;
+            int x = q.top().second.first;
+            int y = q.top().second.second;
+
+            int dist = q.top().first;
             q.pop();
 
-            for(int i = 0; i<4; i++){
-                int new_x = x + dx[i];
-                int new_y = y + dy[i];
+            if(grid[x][y] == 0){
+                return dist;
+            }
+
+            for(int k = 0; k < 4; k++){
+                int new_x = x + dx[k];
+                int new_y = y + dy[k];
 
                 if(new_x >= 0 && new_x < r &&
                     new_y >= 0 && new_y < c &&
-                    grid[new_x][new_y] != -1 && vis[new_x][new_y] != 1){
-                        vis[new_x][new_y] = 1;
-                        q.push({new_x, new_y});
+                    grid[new_x][new_y] != -1){
+
+                    q.push({dist + 1, {new_x, new_y}});
+
                 }
+
             }
         }
 
-
-        return steps;
+        return INT_MAX;
     }
     void islandsAndTreasure(vector<vector<int>>& grid) {
         int r = grid.size();
         int c = grid[0].size();
-        int inf = 2147483647;
-        // vector<vector<int>> vis(r, vector<int>(c,0));
 
         for(int i = 0; i<r; i++){
             for(int j = 0; j<c; j++){
-                if(grid[i][j] == inf){
-                    grid[i][j] = findTre(i, j, grid);
+                if(grid[i][j] == 2147483647){
+                    grid[i][j] = bfs(i, j, grid);
                 }
             }
         }
     }
 };
+
+// NOTES
+// -1 - water
+// 0 - tre
+// INF - land
+
+// find a land cell
+// -if found, bfs/dfs in all 4 direction to find tre cell
+// BFS:
+// no need for visited, as we need to recheck for tre
+
+
+// -1  -1    0
+// 12  inf   -1
+// inf  inf  inf
